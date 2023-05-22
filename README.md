@@ -1,2 +1,2 @@
 # MERN
-MERN study
+MongoDB, Express, React, Node
