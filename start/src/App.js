@@ -1,7 +1,7 @@
 import "./App.css";
 import GoalList from "./components/GoalList";
 
-function App() {
+function App() { 
   const data = [
     {
       id: 1,
