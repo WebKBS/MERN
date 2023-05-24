@@ -3,7 +3,7 @@ import ReactDom from "react-dom";
 import { CSSTransition } from "react-transition-group";
 
 const SiderDrawer = (props) => {
-  const conten t = (
+  const content = (
     <CSSTransition
       in={props.show}
       timeout={200}
