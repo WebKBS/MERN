@@ -1,10 +1,14 @@
 import "./UsersList.css";
 import UserItem from "./UsersItem";
+import Card from "../../shared/components/UiElement/Card";
+
 const UsersList = (props) => {
   if (props.items.length === 0) {
     return (
       <div className="center">
-        <h2>유저가 없습니다.</h2>
+        <Card>
+          <h2>유저가 없습니다.</h2>
+        </Card>
       </div>
     );
   }
