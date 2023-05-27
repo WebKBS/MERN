@@ -24,34 +24,51 @@ const App = () => {
     setIsLoggedIn(false);
   }, []);
 
+  let routes;
+  if (isLoggedIn) {
+    routes = (
+      <Switch>
+        <Route path="/" exact>
+          {/* exact가있으면 해당 path만 적용된다. */}
+          <Users />
+        </Route>
+        <Route path="/:userId/places" exact>
+          <UserPlaces />
+        </Route>
+        <Route path="/places/new" exact>
+          <NewPlace />
+        </Route>
+        <Route path="/places/:placeId">
+          <UpdatePlace />
+        </Route>
+        <Redirect to="/" />
+      </Switch>
+    );
+  } else {
+    routes = (
+      <Switch>
+        <Route path="/" exact>
+          {/* exact가있으면 해당 path만 적용된다. */}
+          <Users />
+        </Route>
+        <Route path="/:userId/places" exact>
+          <UserPlaces />
+        </Route>
+        <Route path="/auth">
+          <Auth />
+        </Route>
+        <Redirect to="/auth" />
+      </Switch>
+    );
+  }
+
   return (
     <AuthContext.Provider
       value={{ isLoggedIn: isLoggedIn, login: login, logout: logout }}
     >
       <Router>
         <MainNavigation />
-        <main>
-          <Switch>
-            <Route path="/" exact>
-              {/* exact가있으면 해당 path만 적용된다. */}
-              <Users />
-            </Route>
-            <Route path="/:userId/places" exact>
-              <UserPlaces />
-            </Route>
-            <Route path="/places/new" exact>
-              <NewPlace />
-            </Route>
-            <Route path="/places/:placeId">
-              <UpdatePlace />
-            </Route>
-            <Route path="/auth">
-              <Auth />
-            </Route>
-            <Redirect to="/" />
-            {/* Redirect는 패스가 없으면 해당 패스로 이동 */}
-          </Switch>
-        </main>
+        <main>{routes}</main>
       </Router>
     </AuthContext.Provider>
   );
