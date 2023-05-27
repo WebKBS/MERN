@@ -6,9 +6,21 @@ import Modal from "../../shared/components/UiElement/Moal";
 
 const PlaceItem = (props) => {
   const [showMap, setShowMap] = useState(false);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
 
   const openMapHandler = () => setShowMap(true);
   const closeMapHandler = () => setShowMap(false);
+  const showDeleteWarningHandler = () => {
+    setShowConfirmModal(true);
+  };
+  const cancelDeleteHandler = () => {
+    setShowConfirmModal(false);
+  };
+
+  const confirmDeleteHandler = () => {
+    setShowConfirmModal(false);
+    console.log("삭제 완료");
+  };
 
   return (
     <React.Fragment>
@@ -23,6 +35,24 @@ const PlaceItem = (props) => {
         <div className="map-container">
           <h2>The MAP!</h2>
         </div>
+      </Modal>
+      <Modal
+        show={showConfirmModal}
+        onCancel={cancelDeleteHandler}
+        header="삭제하시겠습니까?"
+        footerClass="place-item__modal-actions"
+        footer={
+          <React.Fragment>
+            <Button inverse onClick={cancelDeleteHandler}>
+              Cancel
+            </Button>
+            <Button danger onClick={confirmDeleteHandler}>
+              Delete
+            </Button>
+          </React.Fragment>
+        }
+      >
+        <p>삭제 후에는 취소할수 없습니다.</p>
       </Modal>
       <li className="place-item">
         <Card>
@@ -39,7 +69,9 @@ const PlaceItem = (props) => {
               View On Map
             </Button>
             <Button to={`/places/${props.id}`}>Edit</Button>
-            <Button danger>Delete</Button>
+            <Button danger onClick={showDeleteWarningHandler}>
+              Delete
+            </Button>
           </div>
         </Card>
       </li>
