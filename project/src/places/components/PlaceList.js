@@ -1,7 +1,8 @@
-import Card from '../../shared/components/UiElement/Card';
-import PlaceItem from './PlaceItem';
+import Card from "../../shared/components/UiElement/Card";
+import PlaceItem from "./PlaceItem";
 
-import './PlaceList.css';
+import Button from "../../shared/components/FormElements/Button";
+import "./PlaceList.css";
 
 const PlaceList = (props) => {
   if (props.items.length === 0) {
@@ -9,7 +10,7 @@ const PlaceList = (props) => {
       <div className="place-list center">
         <Card>
           <h2>Place가 없습니다. 만드시겠습니까?</h2>
-          <button>Share Place</button>
+          <Button to="/places/new">Share Place</Button>
         </Card>
       </div>
     );
@@ -18,7 +19,16 @@ const PlaceList = (props) => {
   return (
     <ul className="place-list">
       {props.items.map((place) => (
-        <PlaceItem key={place.id} id={place.id} image={place.imageUrl} title={place.title} description={place.description} address={place.address} creatorId={place.creator} coordinates={place.location} />
+        <PlaceItem
+          key={place.id}
+          id={place.id}
+          image={place.imageUrl}
+          title={place.title}
+          description={place.description}
+          address={place.address}
+          creatorId={place.creator}
+          coordinates={place.location}
+        />
       ))}
     </ul>
   );
