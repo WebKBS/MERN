@@ -21,7 +21,10 @@ router.get("/:pid", (req, res, next) => {
   const place = DUMMY_PLACES.find((p) => p.id === placeId);
 
   if (!place) {
-    return res.status(404).json({ message: "일치하는 Id가 없습니다." });
+    // return res.status(404).json({ message: "일치하는 Id가 없습니다." });
+    const error = new Error("일치하는 Id가 없습니다.");
+    error.code = 404;
+    return next(error);
   }
 
   res.json({ place });
@@ -35,7 +38,10 @@ router.get("/user/:uid", (req, res, next) => {
   });
 
   if (!place) {
-    return res.status(404).json({ message: "일치하는 유저 Id가 없습니다." });
+    // return res.status(404).json({ message: "일치하는 유저 Id가 없습니다." });
+    const error = new Error("일치하는 유저 Id가 없습니다.");
+    error.code = 404;
+    return next(error);
   }
 
   res.json({ place });
