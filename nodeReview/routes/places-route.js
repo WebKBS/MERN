@@ -19,6 +19,11 @@ const DUMMY_PLACES = [
 router.get("/:pid", (req, res, next) => {
   const placeId = req.params.pid;
   const place = DUMMY_PLACES.find((p) => p.id === placeId);
+
+  if (!place) {
+    return res.status(404).json({ message: "일치하는 Id가 없습니다." });
+  }
+
   res.json({ place });
 });
 
@@ -28,6 +33,11 @@ router.get("/user/:uid", (req, res, next) => {
   const place = DUMMY_PLACES.find((p) => {
     return p.creator === userId;
   });
+
+  if (!place) {
+    return res.status(404).json({ message: "일치하는 유저 Id가 없습니다." });
+  }
+
   res.json({ place });
 });
 
