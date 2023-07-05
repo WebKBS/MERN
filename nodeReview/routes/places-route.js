@@ -1,5 +1,7 @@
 const express = require("express");
 
+const HttpError = require("../models/http-error");
+
 const router = express.Router();
 
 const DUMMY_PLACES = [
@@ -22,9 +24,11 @@ router.get("/:pid", (req, res, next) => {
 
   if (!place) {
     // return res.status(404).json({ message: "일치하는 Id가 없습니다." });
-    const error = new Error("일치하는 Id가 없습니다.");
-    error.code = 404;
-    return next(error);
+    // const error = new Error("일치하는 Id가 없습니다.");
+    // error.code = 404;
+    // return next(error);
+
+    throw new HttpError("일치하는 Id가 없습니다.", 404);
   }
 
   res.json({ place });
@@ -39,9 +43,11 @@ router.get("/user/:uid", (req, res, next) => {
 
   if (!place) {
     // return res.status(404).json({ message: "일치하는 유저 Id가 없습니다." });
-    const error = new Error("일치하는 유저 Id가 없습니다.");
-    error.code = 404;
-    return next(error);
+    // const error = new Error("일치하는 유저 Id가 없습니다.");
+    // error.code = 404;
+    // return next(error);
+
+    throw new HttpError("일치하는 유저 Id가 없습니다.", 404);
   }
 
   res.json({ place });
