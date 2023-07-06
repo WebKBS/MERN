@@ -31,23 +31,45 @@ const getPlaceById = (req, res, next) => {
   res.json({ place });
 };
 
-const getPlaceByUserId = (req, res, next) => {
+// const getPlaceByUserId = (req, res, next) => {
+//   const userId = req.params.uid;
+
+//   const place = DUMMY_PLACES.find((p) => {
+//     return p.creator === userId;
+//   });
+
+//   if (!place) {
+//     // return res.status(404).json({ message: "일치하는 유저 Id가 없습니다." });
+//     // const error = new Error("일치하는 유저 Id가 없습니다.");
+//     // error.code = 404;
+//     // return next(error);
+
+//     throw new HttpError("일치하는 유저 Id가 없습니다.", 404);
+//   }
+
+//   res.json({ place });
+// };
+
+const getPlacesByUserId = (req, res, next) => {
   const userId = req.params.uid;
 
-  const place = DUMMY_PLACES.find((p) => {
+  const places = DUMMY_PLACES.filter((p) => {
+    console.log(p);
     return p.creator === userId;
   });
 
-  if (!place) {
+  if (!places || places.length === 0) {
     // return res.status(404).json({ message: "일치하는 유저 Id가 없습니다." });
     // const error = new Error("일치하는 유저 Id가 없습니다.");
     // error.code = 404;
     // return next(error);
 
-    throw new HttpError("일치하는 유저 Id가 없습니다.", 404);
+    return next(new HttpError("일치하는 유저 Id가 없습니다.", 404));
   }
 
-  res.json({ place });
+  console.log(places);
+
+  res.json({ places });
 };
 
 const createPlace = (req, res, next) => {
@@ -92,7 +114,7 @@ const deletePlace = (req, res, next) => {
 
 module.exports = {
   getPlaceById: getPlaceById,
-  getPlaceByUserId: getPlaceByUserId,
+  getPlacesByUserId: getPlacesByUserId,
   createPlace: createPlace,
   updatePlaceById: updatePlaceById,
   deletePlace: deletePlace,
