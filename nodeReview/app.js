@@ -12,7 +12,7 @@ app.use(bodyParser.json());
 
 app.use("/api/places", placesRoutes); // /api/places/...;
 
-app.use("u/api/sers", usersRoutes);
+app.use("/api/users", usersRoutes);
 
 app.use((req, res, next) => {
   const error = new HttpError("라우트가 없습니다.", 404);
