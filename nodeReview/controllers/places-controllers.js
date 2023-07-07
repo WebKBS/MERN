@@ -55,7 +55,6 @@ const getPlacesByUserId = (req, res, next) => {
   const userId = req.params.uid;
 
   const places = DUMMY_PLACES.filter((p) => {
-    console.log(p);
     return p.creator === userId;
   });
 
@@ -68,15 +67,12 @@ const getPlacesByUserId = (req, res, next) => {
     return next(new HttpError("일치하는 유저 Id가 없습니다.", 404));
   }
 
-  console.log(places);
-
   res.json({ places });
 };
 
 const createPlace = (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    console.log(errors);
     throw new HttpError("에러가 발생했습니다.", 422);
   }
 
@@ -98,6 +94,11 @@ const createPlace = (req, res, next) => {
 };
 
 const updatePlaceById = (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    throw new HttpError("에러가 발생했습니다.", 422);
+  }
+
   const { title, description } = req.body;
   const placeId = req.params.pid;
 
@@ -114,6 +115,12 @@ const updatePlaceById = (req, res, next) => {
 
 const deletePlace = (req, res, next) => {
   const placeId = req.params.pid;
+
+  if (!DUMMY_PLACES.find((p) => p.id === placeId)) {
+    // 해당 아이디가 아니라면
+    throw new HttpError("id에 해당하는 장소를 찾지 못했습니다.");
+  }
+
   DUMMY_PLACES = DUMMY_PLACES.filter((p) => p.id !== placeId);
 
   res.status(200).json({ message: "삭제완료" });
