@@ -19,9 +19,19 @@ let DUMMY_PLACES = [
   },
 ];
 
-const getPlaceById = (req, res, next) => {
+const getPlaceById = async (req, res, next) => {
   const placeId = req.params.pid;
-  const place = DUMMY_PLACES.find((p) => p.id === placeId);
+  // const place = DUMMY_PLACES.find((p) => p.id === placeId);
+
+  let place;
+
+  try {
+    place = await Place.findById(placeId);
+  } catch (err) {
+    console.log(err);
+    const error = new HttpError("찾는 아이디가 없습니다.", 500);
+    return next(error);
+  }
 
   if (!place) {
     // return res.status(404).json({ message: "일치하는 Id가 없습니다." });
@@ -29,10 +39,11 @@ const getPlaceById = (req, res, next) => {
     // error.code = 404;
     // return next(error);
 
-    throw new HttpError("일치하는 Id가 없습니다.", 404);
+    const error = new HttpError("일치하는 Id가 없습니다.", 404);
+    return next(error);
   }
 
-  res.json({ place });
+  res.json({ place: place.toObject({ getter: true }) });
 };
 
 // const getPlaceByUserId = (req, res, next) => {
