@@ -1,30 +1,13 @@
-const { v4: uuidv4 } = require("uuid");
 const HttpError = require("../models/http-error");
 const { validationResult } = require("express-validator");
 const Place = require("../models/place");
 const mongoose = require("mongoose");
 
 const getCoorsForAddress = require("../util/location");
-// const place = require("../models/place");
 const User = require("../models/user");
-
-// let DUMMY_PLACES = [
-//   {
-//     id: "p1",
-//     title: "Hello",
-//     description: "World",
-//     location: {
-//       lat: 40.743243,
-//       lng: -73.32523,
-//     },
-//     address: "adress",
-//     creator: "u1",
-//   },
-// ];
 
 const getPlaceById = async (req, res, next) => {
   const placeId = req.params.pid;
-  // const place = DUMMY_PLACES.find((p) => p.id === placeId);
 
   let place;
 
@@ -37,11 +20,6 @@ const getPlaceById = async (req, res, next) => {
   }
 
   if (!place) {
-    // return res.status(404).json({ message: "일치하는 Id가 없습니다." });
-    // const error = new Error("일치하는 Id가 없습니다.");
-    // error.code = 404;
-    // return next(error);
-
     const error = new HttpError("일치하는 Id가 없습니다.", 404);
     return next(error);
   }
@@ -51,10 +29,6 @@ const getPlaceById = async (req, res, next) => {
 
 const getPlacesByUserId = async (req, res, next) => {
   const userId = req.params.uid;
-
-  // const places = DUMMY_PLACES.filter((p) => {
-  //   return p.creator === userId;
-  // });
 
   // let places;
   let userWithPlaces;
@@ -66,6 +40,7 @@ const getPlacesByUserId = async (req, res, next) => {
     return next(error);
   }
 
+  // if(!places || places.length === 0)
   if (!userWithPlaces || userWithPlaces.length === 0) {
     return next(new HttpError("일치하는 유저 Id가 없습니다.", 404));
   }
@@ -84,9 +59,8 @@ const createPlace = async (req, res, next) => {
   }
 
   const { title, description, address, creator } = req.body;
-  // ex) const title = req.body.title;
+
   let coordinates = await getCoorsForAddress();
-  console.log(req.body);
 
   const createdPlace = new Place({
     title,
