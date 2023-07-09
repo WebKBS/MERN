@@ -4,6 +4,7 @@ const { validationResult } = require("express-validator");
 const Place = require("../models/place");
 
 const getCoorsForAddress = require("../util/location");
+const place = require("../models/place");
 
 let DUMMY_PLACES = [
   {
@@ -43,45 +44,32 @@ const getPlaceById = async (req, res, next) => {
     return next(error);
   }
 
-  res.json({ place: place.toObject({ getter: true }) });
+  res.json({ place: place.toObject({ getters: true }) });
 };
 
-// const getPlaceByUserId = (req, res, next) => {
-//   const userId = req.params.uid;
-
-//   const place = DUMMY_PLACES.find((p) => {
-//     return p.creator === userId;
-//   });
-
-//   if (!place) {
-//     // return res.status(404).json({ message: "일치하는 유저 Id가 없습니다." });
-//     // const error = new Error("일치하는 유저 Id가 없습니다.");
-//     // error.code = 404;
-//     // return next(error);
-
-//     throw new HttpError("일치하는 유저 Id가 없습니다.", 404);
-//   }
-
-//   res.json({ place });
-// };
-
-const getPlacesByUserId = (req, res, next) => {
+const getPlacesByUserId = async (req, res, next) => {
   const userId = req.params.uid;
 
-  const places = DUMMY_PLACES.filter((p) => {
-    return p.creator === userId;
-  });
+  // const places = DUMMY_PLACES.filter((p) => {
+  //   return p.creator === userId;
+  // });
+
+  let places;
+  try {
+    places = await Place.find({ creator: userId });
+  } catch (err) {
+    console.log(err);
+    const error = new HttpError("일치하는 유저 Id가 없습니다.", 404);
+    return next(error);
+  }
 
   if (!places || places.length === 0) {
-    // return res.status(404).json({ message: "일치하는 유저 Id가 없습니다." });
-    // const error = new Error("일치하는 유저 Id가 없습니다.");
-    // error.code = 404;
-    // return next(error);
-
     return next(new HttpError("일치하는 유저 Id가 없습니다.", 404));
   }
 
-  res.json({ places });
+  res.json({
+    places: places.map((place) => place.toObject({ getters: true })),
+  });
 };
 
 const createPlace = async (req, res, next) => {
