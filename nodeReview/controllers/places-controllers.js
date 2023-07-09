@@ -56,21 +56,24 @@ const getPlacesByUserId = async (req, res, next) => {
   //   return p.creator === userId;
   // });
 
-  let places;
+  // let places;
+  let userWithPlaces;
   try {
-    places = await Place.find({ creator: userId });
+    userWithPlaces = await User.findById(userId).populate("places");
   } catch (err) {
     console.log(err);
-    const error = new HttpError("일치하는 유저 Id가 없습니다.", 404);
+    const error = new HttpError("일치하는 유저 Id가 없습니다.", 500);
     return next(error);
   }
 
-  if (!places || places.length === 0) {
+  if (!userWithPlaces || userWithPlaces.length === 0) {
     return next(new HttpError("일치하는 유저 Id가 없습니다.", 404));
   }
 
   res.json({
-    places: places.map((place) => place.toObject({ getters: true })),
+    places: userWithPlaces.places.map((place) =>
+      place.toObject({ getters: true })
+    ),
   });
 };
 
