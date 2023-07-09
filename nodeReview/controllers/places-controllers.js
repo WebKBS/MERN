@@ -106,7 +106,7 @@ const createPlace = async (req, res, next) => {
   res.status(201).json({ place: createdPlace });
 };
 
-const updatePlaceById = (req, res, next) => {
+const updatePlaceById = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     throw new HttpError("에러가 발생했습니다.", 422);
@@ -115,26 +115,48 @@ const updatePlaceById = (req, res, next) => {
   const { title, description } = req.body;
   const placeId = req.params.pid;
 
-  const updatedPlace = { ...DUMMY_PLACES.find((p) => p.id === placeId) };
-  const placeIndex = DUMMY_PLACES.findIndex((p) => p.id === placeId);
-
-  updatedPlace.title = title;
-  updatedPlace.description = description;
-
-  DUMMY_PLACES[placeIndex] = updatedPlace;
-
-  res.status(200).json({ place: updatedPlace });
-};
-
-const deletePlace = (req, res, next) => {
-  const placeId = req.params.pid;
-
-  if (!DUMMY_PLACES.find((p) => p.id === placeId)) {
-    // 해당 아이디가 아니라면
-    throw new HttpError("id에 해당하는 장소를 찾지 못했습니다.");
+  let place;
+  try {
+    place = await Place.findById(placeId);
+  } catch (err) {
+    console.log(err);
+    const error = new HttpError("업데이트에 실패하였습니다.", 500);
+    return next(error);
   }
 
-  DUMMY_PLACES = DUMMY_PLACES.filter((p) => p.id !== placeId);
+  place.title = title;
+  place.description = description;
+
+  try {
+    await place.save();
+  } catch (err) {
+    console.log(err);
+    const error = new HttpError("업데이트 저장 실패.", 500);
+    return next(error);
+  }
+
+  res.status(200).json({ place: place.toObject({ getters: true }) });
+};
+
+const deletePlace = async (req, res, next) => {
+  const placeId = req.params.pid;
+
+  let place;
+  try {
+    place = await Place.findById(placeId);
+  } catch (err) {
+    console.log(err);
+    const error = new HttpError("삭제가 되지 않았습니다.", 500);
+    return next(error);
+  }
+
+  try {
+    await place.deleteOne();
+  } catch (err) {
+    console.log(err);
+    const error = new HttpError("삭제가 되지 않았습니다.", 500);
+    return next(error);
+  }
 
   res.status(200).json({ message: "삭제완료" });
 };
