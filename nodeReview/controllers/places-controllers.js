@@ -1,6 +1,9 @@
 const { v4: uuidv4 } = require("uuid");
 const HttpError = require("../models/http-error");
 const { validationResult } = require("express-validator");
+const Place = require("../models/place");
+
+const getCoorsForAddress = require("../util/location");
 
 let DUMMY_PLACES = [
   {
@@ -70,25 +73,36 @@ const getPlacesByUserId = (req, res, next) => {
   res.json({ places });
 };
 
-const createPlace = (req, res, next) => {
+const createPlace = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    throw new HttpError("에러가 발생했습니다.", 422);
+    next(HttpError("에러가 발생했습니다.", 422));
   }
 
-  const { title, description, coordinates, address, creator } = req.body;
+  const { title, description, address, creator } = req.body;
   // ex) const title = req.body.title;
+  let coordinates = await getCoorsForAddress();
+  console.log(req.body);
 
-  const createdPlace = {
-    id: uuidv4(),
+  const createdPlace = new Place({
     title,
     description,
-    location: coordinates,
     address,
+    location: coordinates,
+    image:
+      "https://modo-phinf.pstatic.net/20170208_281/14865453315606kNKk_JPEG/mosa7CEoze.jpeg?type=w1100",
     creator,
-  };
+  });
 
-  DUMMY_PLACES.push(createPlace);
+  try {
+    await createdPlace.save();
+  } catch (err) {
+    console.log(err);
+    const error = new HttpError("디비 생성 실패", 500);
+
+    // 반드시 next error를 해줘야 한다. 하지않으면 오류가 발생해도 코드가 실행됨
+    return next(error);
+  }
 
   res.status(201).json({ place: createdPlace });
 };
