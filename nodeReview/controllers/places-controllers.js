@@ -109,7 +109,8 @@ const createPlace = async (req, res, next) => {
 const updatePlaceById = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    throw new HttpError("에러가 발생했습니다.", 422);
+    // throw new HttpError("에러가 발생했습니다.", 422);
+    return next(new HttpError("에러가 발생했습니다.", 422));
   }
 
   const { title, description } = req.body;
