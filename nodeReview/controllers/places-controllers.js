@@ -2,23 +2,25 @@ const { v4: uuidv4 } = require("uuid");
 const HttpError = require("../models/http-error");
 const { validationResult } = require("express-validator");
 const Place = require("../models/place");
+const mongoose = require("mongoose");
 
 const getCoorsForAddress = require("../util/location");
-const place = require("../models/place");
+// const place = require("../models/place");
+const User = require("../models/user");
 
-let DUMMY_PLACES = [
-  {
-    id: "p1",
-    title: "Hello",
-    description: "World",
-    location: {
-      lat: 40.743243,
-      lng: -73.32523,
-    },
-    address: "adress",
-    creator: "u1",
-  },
-];
+// let DUMMY_PLACES = [
+//   {
+//     id: "p1",
+//     title: "Hello",
+//     description: "World",
+//     location: {
+//       lat: 40.743243,
+//       lng: -73.32523,
+//     },
+//     address: "adress",
+//     creator: "u1",
+//   },
+// ];
 
 const getPlaceById = async (req, res, next) => {
   const placeId = req.params.pid;
@@ -93,8 +95,33 @@ const createPlace = async (req, res, next) => {
     creator,
   });
 
+  // user가 있는지 확인
+  let user;
   try {
-    await createdPlace.save();
+    user = await User.findById(creator);
+  } catch (err) {
+    console.log(err);
+    const error = new HttpError("장소 생성에 실패했습니다.", 500);
+    return next(error);
+  }
+
+  if (!user) {
+    const error = new HttpError("ID에 해당한 유저를 찾을수 없습니다.", 404);
+    return next(error);
+  }
+
+  // console.log(user);
+
+  try {
+    // await createdPlace.save();
+
+    //session 설정
+    const sess = await mongoose.startSession();
+    sess.startTransaction();
+    await createdPlace.save({ session: sess });
+    user.places.push(createdPlace);
+    await user.save({ session: sess });
+    await sess.commitTransaction();
   } catch (err) {
     console.log(err);
     const error = new HttpError("디비 생성 실패", 500);

@@ -11,7 +11,7 @@ const placeSchema = new Schema({
     lat: { type: Number, required: true },
     lng: { type: Number, required: true },
   },
-  creator: { type: String, requried: true },
+  creator: { type: mongoose.Types.ObjectId, required: true, ref: "User" },
 });
 
 // 모델의 첫글자는 대문자여야한다.

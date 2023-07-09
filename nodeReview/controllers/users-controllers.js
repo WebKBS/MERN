@@ -35,7 +35,7 @@ const signup = async (req, res, next) => {
     return next(new HttpError("signup 에러가 발생했습니다.", 422));
   }
 
-  const { name, email, password, places } = req.body;
+  const { name, email, password } = req.body;
 
   let existingUser;
   try {
@@ -57,7 +57,7 @@ const signup = async (req, res, next) => {
     image:
       "https://modo-phinf.pstatic.net/20170208_281/14865453315606kNKk_JPEG/mosa7CEoze.jpeg?type=w1100",
     password,
-    places,
+    places: [],
   });
 
   try {
