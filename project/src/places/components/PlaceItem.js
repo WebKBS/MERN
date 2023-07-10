@@ -2,7 +2,7 @@ import React, { useState, useContext } from "react";
 import "./PlaceItem.css";
 import Card from "../../shared/components/UiElement/Card";
 import Button from "../../shared/components/FormElements/Button";
-import Modal from "../../shared/components/UiElement/Moal";
+import Modal from "../../shared/components/UiElement/Modal";
 import { AuthContext } from "../../shared/context/auth-context";
 
 const PlaceItem = (props) => {

@@ -1,8 +1,11 @@
+import React from "react";
 import "./Auth.css";
 import { useState, useContext } from "react";
 import Card from "../../shared/components/UiElement/Card";
 import Input from "../../shared/components/FormElements/Input";
 import Button from "../../shared/components/FormElements/Button";
+import ErrorModal from "../../shared/components/UiElement/ErrorModal";
+import LoadingSpinner from "../../shared/components/UiElement/LoadingSpinner";
 
 import {
   VALIDATOR_EMAIL,
@@ -17,6 +20,8 @@ const Auth = () => {
   const auth = useContext(AuthContext);
 
   const [isLoginMode, setIsLoginMode] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState();
   const [formState, inputHandler, setFormData] = useForm(
     {
       email: {
@@ -56,11 +61,12 @@ const Auth = () => {
   const authSubmitHandler = async (event) => {
     event.preventDefault();
 
-    //cors오류, 같은 도메인이 아니면 (백: 4000, 프론트: 3000) cors오류가 발생한다.
+    //cors오류, 같은 도메인이 아니면 (백: 4000, 프론트: 3000) cors오류가 발생한다. Access Control설정이 반드시 필요함
 
     if (isLoginMode) {
     } else {
       try {
+        setIsLoading(true);
         const response = await fetch("http://localhost:4000/api/users/signup", {
           method: "POST",
           headers: {
@@ -74,57 +80,75 @@ const Auth = () => {
         });
 
         const responseData = await response.json();
+
+        // 에러 발생시
+        if (!response.ok) {
+          throw new Error(responseData.message);
+        }
         console.log(responseData);
+        setIsLoading(false);
+
+        auth.login();
       } catch (err) {
         console.log(err);
+        setIsLoading(false);
+        setError(err.message || "오류가 발생했습니다. 다시 시도하세요.");
       }
     }
 
-    auth.login();
+    setIsLoading(false);
+  };
+
+  const errorHandler = () => {
+    setError(null);
   };
 
   return (
-    <Card className="authentication">
-      <h2>Login Required</h2>
-      <hr />
-      <form onSubmit={authSubmitHandler}>
-        {!isLoginMode && (
+    <React.Fragment>
+      <ErrorModal error={error} onClear={errorHandler}></ErrorModal>
+      <Card className="authentication">
+        {isLoading && <LoadingSpinner asOverlay />}
+        <h2>Login Required</h2>
+        <hr />
+        <form onSubmit={authSubmitHandler}>
+          {!isLoginMode && (
+            <Input
+              element="input"
+              id="name"
+              type="text"
+              label="Your Name"
+              validators={[VALIDATOR_REQUIRE()]}
+              errorText="이름을 입력해주세요."
+              onInput={inputHandler}
+            />
+          )}
           <Input
             element="input"
-            id="name"
-            type="text"
-            label="Your Name"
-            validators={[VALIDATOR_REQUIRE()]}
-            errorText="이름을 입력해주세요."
+            id="email"
+            type="email"
+            label="E-mail"
+            validators={[VALIDATOR_EMAIL()]}
+            errorText="이메일을 입력해주세요"
             onInput={inputHandler}
           />
-        )}
-        <Input
-          element="input"
-          id="email"
-          type="email"
-          label="E-mail"
-          validators={[VALIDATOR_EMAIL()]}
-          errorText="이메일을 입력해주세요"
-          onInput={inputHandler}
-        />
-        <Input
-          element="input"
-          id="password"
-          type="password"
-          label="Password"
-          validators={[VALIDATOR_MINLENGTH(5)]}
-          errorText="5글자 이상입력해주세요"
-          onInput={inputHandler}
-        />
-        <Button type="submit" disabled={!formState.isValid}>
-          {isLoginMode ? "Login" : "SignUp"}
+          <Input
+            element="input"
+            id="password"
+            type="password"
+            label="Password"
+            validators={[VALIDATOR_MINLENGTH(5)]}
+            errorText="5글자 이상입력해주세요"
+            onInput={inputHandler}
+          />
+          <Button type="submit" disabled={!formState.isValid}>
+            {isLoginMode ? "Login" : "SignUp"}
+          </Button>
+        </form>
+        <Button inverse onClick={switchModeHandler}>
+          Switch To {isLoginMode ? "SignUp" : "Login"}
         </Button>
-      </form>
-      <Button inverse onClick={switchModeHandler}>
-        Switch To {isLoginMode ? "SignUp" : "Login"}
-      </Button>
-    </Card>
+      </Card>
+    </React.Fragment>
   );
 };
 export default Auth;
