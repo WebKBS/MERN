@@ -11,6 +11,20 @@ const app = express();
 
 app.use(bodyParser.json());
 
+app.use((req, res, next) => {
+  // cors오류를 해결하기위한 header설정/ *를 설정하면 들어오는 모든 요청을 허용한다.
+
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+  );
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PATCH, DELETE");
+
+  // 다른 미들웨어로 전달 되도록 next
+  next();
+});
+
 app.use("/api/places", placesRoutes); // /api/places/...;
 
 app.use("/api/users", usersRoutes);
