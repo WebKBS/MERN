@@ -24,16 +24,19 @@ export const useHttpClient = () => {
 
         const responseData = response.json();
 
+        activeHttpRequests.current = activeHttpRequests.current.filter(
+          (reqCtrl) => reqCtrl !== httpAbortCtrl
+        );
+
         if (!response.ok) {
           throw new Error(responseData.message);
         }
-
+        setIsLoading(false);
         return responseData;
       } catch (err) {
         setError(err.message);
+        throw err;
       }
-
-      setIsLoading(false);
     },
     []
   );
