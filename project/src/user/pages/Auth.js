@@ -63,10 +63,38 @@ const Auth = () => {
 
     //cors오류, 같은 도메인이 아니면 (백: 4000, 프론트: 3000) cors오류가 발생한다. Access Control설정이 반드시 필요함
 
+    setIsLoading(true);
+
     if (isLoginMode) {
+      try {
+        const response = await fetch("http://localhost:4000/api/users/login", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email: formState.inputs.email.value,
+            password: formState.inputs.password.value,
+          }),
+        });
+
+        const responseData = await response.json();
+
+        // 에러 발생시
+        if (!response.ok) {
+          throw new Error(responseData.message);
+        }
+        console.log(responseData);
+        setIsLoading(false);
+
+        auth.login();
+      } catch (err) {
+        console.log(err);
+        setIsLoading(false);
+        setError(err.message || "오류가 발생했습니다. 다시 시도하세요.");
+      }
     } else {
       try {
-        setIsLoading(true);
         const response = await fetch("http://localhost:4000/api/users/signup", {
           method: "POST",
           headers: {
