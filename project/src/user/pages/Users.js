@@ -3,42 +3,30 @@ import { useEffect, useState } from "react";
 import UsersList from "../components/UsersList";
 import ErrorModal from "../../shared/components/UiElement/ErrorModal";
 import LoadingSpinner from "../../shared/components/UiElement/LoadingSpinner";
+import { useHttpClient } from "../../shared/hooks/http-hook";
 
 const Users = () => {
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState();
+  const { isLoading, error, sendRequest, clearError } = useHttpClient();
   const [loadedUsers, setLoadedUsers] = useState();
 
   // useEffect에는 콜백함수로 async를 넣지않는다.!!! 반드시 함수를 따로 만들어야함.
   useEffect(() => {
-    const sendRequest = async () => {
-      setIsLoading(true);
-
+    const fetchUsers = async () => {
       try {
-        const response = await fetch("http://localhost:4000/api/users");
-        const responseData = await response.json();
-
-        if (!response.ok) {
-          throw new Error(response.message);
-        }
+        const responseData = await sendRequest(
+          "http://localhost:4000/api/users"
+        );
 
         setLoadedUsers(responseData.users);
-        setIsLoading(true);
-      } catch (err) {
-        setError(err.message);
-      }
-      setIsLoading(false);
+      } catch (err) {}
     };
 
-    sendRequest();
-  }, []);
+    fetchUsers();
+  }, [sendRequest]);
 
-  const errorHandler = () => {
-    setError(null);
-  };
   return (
     <React.Fragment>
-      <ErrorModal error={error} onClear={errorHandler} />
+      <ErrorModal error={error} onClear={clearError} />
       {isLoading && (
         <div className="center">
           <LoadingSpinner />
