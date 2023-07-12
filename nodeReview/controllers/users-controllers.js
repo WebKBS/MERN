@@ -80,7 +80,10 @@ const login = async (req, res, next) => {
     return next(error);
   }
 
-  res.json({ message: "Login!!" });
+  res.json({
+    message: "Login!!",
+    user: existingUser.toObject({ getters: true }),
+  });
 };
 
 module.exports = {
