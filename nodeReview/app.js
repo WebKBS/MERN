@@ -43,7 +43,7 @@ app.use((error, req, res, next) => {
 });
 
 require("dotenv").config();
-const url = process.env.MONGODB_URL;
+const url = "";
 // mongoose가 성공적으로 연결되면 서버 열림
 mongoose
   .connect(url)
