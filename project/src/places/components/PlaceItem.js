@@ -4,8 +4,12 @@ import Card from '../../shared/components/UiElement/Card';
 import Button from '../../shared/components/FormElements/Button';
 import Modal from '../../shared/components/UiElement/Modal';
 import { AuthContext } from '../../shared/context/auth-context';
+import { useHttpClient } from '../../shared/hooks/http-hook';
+import ErrorModal from '../../shared/components/UiElement/ErrorModal';
+import LoadingSpinner from '../../shared/components/UiElement/LoadingSpinner';
 
 const PlaceItem = (props) => {
+  const { isLoading, error, sendRequest, clearError } = useHttpClient();
   const auth = useContext(AuthContext);
 
   const [showMap, setShowMap] = useState(false);
@@ -20,13 +24,20 @@ const PlaceItem = (props) => {
     setShowConfirmModal(false);
   };
 
-  const confirmDeleteHandler = () => {
+  const confirmDeleteHandler = async () => {
     setShowConfirmModal(false);
-    console.log('삭제 완료');
+
+    try {
+      await sendRequest(`http://localhost:4000/api/places/${props.id}`, 'DELETE');
+      props.onDelete(props.id);
+    } catch (err) {
+      console.log('삭제실패', err);
+    }
   };
 
   return (
     <React.Fragment>
+      <ErrorModal error={error} onClear={clearError} />
       <Modal show={showMap} onCancel={closeMapHandler} header={props.address} contentClass="place-item__modal-content" footerClass="place-item__modal-actions" footer={<Button onClick={closeMapHandler}>Close</Button>}>
         <div className="map-container">
           <h2>The MAP!</h2>
@@ -52,6 +63,7 @@ const PlaceItem = (props) => {
       </Modal>
       <li className="place-item">
         <Card>
+          {isLoading && <LoadingSpinner asOverlay />}
           <div className="place-item__image">
             <img src={props.image} alt={props.title} />
           </div>

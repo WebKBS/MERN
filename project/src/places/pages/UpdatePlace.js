@@ -1,5 +1,5 @@
 import { useParams } from 'react-router-dom';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 
 import Input from '../../shared/components/FormElements/Input';
 import Button from '../../shared/components/FormElements/Button';
@@ -13,14 +13,14 @@ import './PlaceForm.css';
 
 import LoadingSpinner from '../../shared/components/UiElement/LoadingSpinner';
 import ErrorModal from '../../shared/components/UiElement/ErrorModal';
-// import { useHistory } from 'react-router-dom/cjs/react-router-dom.min';
-// import { AuthContext } from '../../shared/context/auth-context';
+import { useHistory } from 'react-router-dom/cjs/react-router-dom.min';
+import { AuthContext } from '../../shared/context/auth-context';
 
 const UpdatePlace = () => {
-  // const auth = useContext(AuthContext);
+  const auth = useContext(AuthContext);
   const { isLoading, error, sendRequest, clearError } = useHttpClient();
   const [loadedPlace, setLoadedPlace] = useState();
-  // const history = useHistory();
+  const history = useHistory();
 
   const placeId = useParams().placeId;
   const [formState, inputHandler, setFormData] = useForm(
@@ -65,7 +65,7 @@ const UpdatePlace = () => {
   const placeUpdateSubmitHandler = async (event) => {
     event.preventDefault();
     try {
-      sendRequest(
+      await sendRequest(
         `http://localhost:4000/api/places/${placeId}`,
         'PATCH',
         JSON.stringify({
@@ -77,7 +77,7 @@ const UpdatePlace = () => {
         }
       );
 
-      // history.push('/' + auth.userId + '/places');
+      history.push('/' + auth.userId + '/places');
     } catch (err) {
       console.log('form 전송실패', err);
     }
