@@ -76,8 +76,10 @@ const PlaceItem = (props) => {
             <Button inverse onClick={openMapHandler}>
               View On Map
             </Button>
-            {auth.isLoggedIn && <Button to={`/places/${props.id}`}>Edit</Button>}
-            {auth.isLoggedIn && (
+
+            {/* auth userId를 검증해서 만든사람이 맞는지 확인한다. 아니면 수정버튼을 제거 */}
+            {auth.userId === props.creatorId && <Button to={`/places/${props.id}`}>Edit</Button>}
+            {auth.userId === props.creatorId && (
               <Button danger onClick={showDeleteWarningHandler}>
                 Delete
               </Button>
