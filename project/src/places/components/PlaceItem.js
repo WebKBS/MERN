@@ -1,9 +1,9 @@
-import React, { useState, useContext } from "react";
-import "./PlaceItem.css";
-import Card from "../../shared/components/UiElement/Card";
-import Button from "../../shared/components/FormElements/Button";
-import Modal from "../../shared/components/UiElement/Modal";
-import { AuthContext } from "../../shared/context/auth-context";
+import React, { useState, useContext } from 'react';
+import './PlaceItem.css';
+import Card from '../../shared/components/UiElement/Card';
+import Button from '../../shared/components/FormElements/Button';
+import Modal from '../../shared/components/UiElement/Modal';
+import { AuthContext } from '../../shared/context/auth-context';
 
 const PlaceItem = (props) => {
   const auth = useContext(AuthContext);
@@ -22,19 +22,12 @@ const PlaceItem = (props) => {
 
   const confirmDeleteHandler = () => {
     setShowConfirmModal(false);
-    console.log("삭제 완료");
+    console.log('삭제 완료');
   };
 
   return (
     <React.Fragment>
-      <Modal
-        show={showMap}
-        onCancel={closeMapHandler}
-        header={props.address}
-        contentClass="place-item__modal-content"
-        footerClass="place-item__modal-actions"
-        footer={<Button onClick={closeMapHandler}>Close</Button>}
-      >
+      <Modal show={showMap} onCancel={closeMapHandler} header={props.address} contentClass="place-item__modal-content" footerClass="place-item__modal-actions" footer={<Button onClick={closeMapHandler}>Close</Button>}>
         <div className="map-container">
           <h2>The MAP!</h2>
         </div>
@@ -71,9 +64,7 @@ const PlaceItem = (props) => {
             <Button inverse onClick={openMapHandler}>
               View On Map
             </Button>
-            {auth.isLoggedIn && (
-              <Button to={`/places/${props.id}`}>Edit</Button>
-            )}
+            {auth.isLoggedIn && <Button to={`/places/${props.id}`}>Edit</Button>}
             {auth.isLoggedIn && (
               <Button danger onClick={showDeleteWarningHandler}>
                 Delete
