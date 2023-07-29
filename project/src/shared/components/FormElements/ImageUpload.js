@@ -3,11 +3,11 @@ import Button from "./Button";
 import { useEffect, useRef, useState } from "react";
 
 const ImageUpload = (props) => {
-  const filePickerRef = useRef();
   const [file, setFile] = useState();
   const [previewUrl, setPreviewUrl] = useState();
-  const [isValid, setIsvalid] = useState(false);
+  const [isValid, setIsValid] = useState(false);
 
+  const filePickerRef = useRef();
   useEffect(() => {
     if (!file) {
       return;
@@ -24,16 +24,16 @@ const ImageUpload = (props) => {
     let pickedFile;
     let fileIsValid = isValid;
 
-    if (event.target.files || event.target.files.length === 1) {
-      const pickedFile = event.target.files[0];
+    if (event.target.files && event.target.files.length === 1) {
+      pickedFile = event.target.files[0];
       setFile(pickedFile);
-      setIsvalid(true);
+      setIsValid(true);
       fileIsValid = true;
+      props.onInput(props.id, pickedFile, fileIsValid);
     } else {
-      setIsvalid(false);
+      setIsValid(false);
       fileIsValid = false;
     }
-    props.onInput(props.id, pickedFile, fileIsValid);
   };
 
   const pickImageHandler = () => {
@@ -47,14 +47,13 @@ const ImageUpload = (props) => {
         ref={filePickerRef}
         style={{ display: "none" }}
         type="file"
-        accept=".jpg, .png, .jpeg"
+        accept=".jpg,.png,.jpeg"
         onChange={pickedHandler}
       />
       <div className={`image-upload ${props.center && "center"}`}>
         <div className="image-upload__preview">
-          {/* previewUrl이 있으면 생성 */}
           {previewUrl && <img src={previewUrl} alt="Preview" />}
-          {!previewUrl && <p>이미지를 추가해주세요.</p>}
+          {!previewUrl && <p>Please pick an image.</p>}
         </div>
         <Button type="button" onClick={pickImageHandler}>
           PICK IMAGE

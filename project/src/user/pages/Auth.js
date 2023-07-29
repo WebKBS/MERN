@@ -71,8 +71,6 @@ const Auth = () => {
   const authSubmitHandler = async (event) => {
     event.preventDefault();
 
-    console.log(formState.inputs);
-
     //cors오류, 같은 도메인이 아니면 (백: 4000, 프론트: 3000) cors오류가 발생한다. Access Control설정이 반드시 필요함
 
     if (isLoginMode) {
@@ -93,27 +91,30 @@ const Auth = () => {
       } catch (err) {}
     } else {
       try {
+        const formData = new FormData();
+
+        formData.append("name", formState.inputs.name.value);
+        formData.append("email", formState.inputs.email.value);
+        formData.append("password", formState.inputs.password.value);
+        formData.append("image", formState.inputs.image.value);
+        console.log(formState.inputs.image.value);
+
         const responseData = await sendRequest(
           "http://localhost:4000/api/users/signup",
           "POST",
-          JSON.stringify({
-            name: formState.inputs.name.value,
-            email: formState.inputs.email.value,
-            password: formState.inputs.password.value,
-          }),
-          {
-            "Content-Type": "application/json",
-          }
+          formData
         );
 
         auth.login(responseData.user.id);
-      } catch (err) {}
+      } catch (err) {
+        console.log("post 에러", error);
+      }
     }
   };
 
   return (
     <React.Fragment>
-      <ErrorModal error={error} onClear={clearError}></ErrorModal>
+      <ErrorModal error={error} onClear={clearError} />
       <Card className="authentication">
         {isLoading && <LoadingSpinner asOverlay />}
         <h2>Login Required</h2>
@@ -131,7 +132,12 @@ const Auth = () => {
             />
           )}
           {!isLoginMode && (
-            <ImageUpload center id="image" onInput={inputHandler} />
+            <ImageUpload
+              center
+              id="image"
+              onInput={inputHandler}
+              errorText="이미지를 추가하세요"
+            />
           )}
           <Input
             element="input"

@@ -3,7 +3,6 @@ import UserItem from "./UsersItem";
 import Card from "../../shared/components/UiElement/Card";
 
 const UsersList = (props) => {
-  console.log(props);
   if (props.items.length === 0) {
     return (
       <div className="center">

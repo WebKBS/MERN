@@ -24,6 +24,7 @@ const signup = async (req, res, next) => {
     // 디비 연결후에는 반드시 next로
     return next(new HttpError("signup 에러가 발생했습니다.", 422));
   }
+  console.log(req.body);
 
   const { name, email, password } = req.body;
 
@@ -44,8 +45,7 @@ const signup = async (req, res, next) => {
   const createdUser = new User({
     name,
     email,
-    image:
-      "https://modo-phinf.pstatic.net/20170208_281/14865453315606kNKk_JPEG/mosa7CEoze.jpeg?type=w1100",
+    image: req.find.path,
     password,
     places: [],
   });

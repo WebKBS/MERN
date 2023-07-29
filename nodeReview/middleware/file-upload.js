@@ -10,20 +10,20 @@ const MIME_TYPE_MAP = {
 const fileUpload = multer({
   limits: 500000,
   storage: multer.diskStorage({
-    destination: (req, file, callback) => {
-      callback(null, "uploads/images");
+    destination: (req, file, cb) => {
+      cb(null, "uploads/images");
     },
-    filename: (req, file, callback) => {
+    filename: (req, file, cb) => {
       const ext = MIME_TYPE_MAP[file.mimetype];
-      callback(null, uuid.v1() + "." + ext);
+      cb(null, uuid.v1() + "." + ext);
     },
   }),
 
   // 이미지만 검증 필터
-  fileFilter: (req, file, callback) => {
+  fileFilter: (req, file, cb) => {
     const isValid = !!MIME_TYPE_MAP[file.mimetype];
     let error = isValid ? null : new Error("확장자명이 잘못되었습니다.");
-    callback(error, isValid);
+    cb(error, isValid);
   },
 });
 
