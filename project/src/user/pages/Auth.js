@@ -44,6 +44,7 @@ const Auth = () => {
         {
           ...formState.inputs,
           name: undefined,
+          image: undefined,
         },
         formState.inputs.email.isValid && formState.inputs.password.isValid
       );
@@ -51,9 +52,16 @@ const Auth = () => {
       setFormData(
         {
           ...formState.inputs,
-          name: "",
-          isValid: false,
+          name: {
+            value: "",
+            isValid: false,
+          },
+          image: {
+            value: null,
+            isValid: false,
+          },
         },
+
         false
       );
     }
@@ -62,6 +70,8 @@ const Auth = () => {
 
   const authSubmitHandler = async (event) => {
     event.preventDefault();
+
+    console.log(formState.inputs);
 
     //cors오류, 같은 도메인이 아니면 (백: 4000, 프론트: 3000) cors오류가 발생한다. Access Control설정이 반드시 필요함
 
@@ -120,7 +130,9 @@ const Auth = () => {
               onInput={inputHandler}
             />
           )}
-          {!isLoginMode && <ImageUpload center />}
+          {!isLoginMode && (
+            <ImageUpload center id="image" onInput={inputHandler} />
+          )}
           <Input
             element="input"
             id="email"
