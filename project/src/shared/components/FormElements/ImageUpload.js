@@ -29,11 +29,13 @@ const ImageUpload = (props) => {
       setFile(pickedFile);
       setIsValid(true);
       fileIsValid = true;
-      props.onInput(props.id, pickedFile, fileIsValid);
     } else {
       setIsValid(false);
       fileIsValid = false;
     }
+    console.log(pickedFile);
+
+    props.onInput(props.id, pickedFile, fileIsValid);
   };
 
   const pickImageHandler = () => {
@@ -47,8 +49,8 @@ const ImageUpload = (props) => {
         ref={filePickerRef}
         style={{ display: "none" }}
         type="file"
-        accept=".jpg,.png,.jpeg"
-        onChange={pickedHandler}
+        accept=".jpg, .png, .jpeg"
+        onInput={pickedHandler}
       />
       <div className={`image-upload ${props.center && "center"}`}>
         <div className="image-upload__preview">

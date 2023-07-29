@@ -99,6 +99,7 @@ const Auth = () => {
         formData.append("image", formState.inputs.image.value);
         console.log(formState.inputs.image.value);
 
+        console.log(formData);
         const responseData = await sendRequest(
           "http://localhost:4000/api/users/signup",
           "POST",
