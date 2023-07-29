@@ -97,9 +97,8 @@ const Auth = () => {
         formData.append("email", formState.inputs.email.value);
         formData.append("password", formState.inputs.password.value);
         formData.append("image", formState.inputs.image.value);
-        console.log(formState.inputs.image.value);
-
         console.log(formData);
+
         const responseData = await sendRequest(
           "http://localhost:4000/api/users/signup",
           "POST",
