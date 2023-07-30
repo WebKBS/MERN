@@ -179,7 +179,7 @@ const deletePlace = async (req, res, next) => {
 
   fs.unlink(imagePath, (err) => {
     console.log(err);
-    console.log("이미지가 삭제되지 않았습니다.");
+    console.log("이미지가 삭제되었습니다.");
   });
 
   res.status(200).json({ message: "삭제완료" });
