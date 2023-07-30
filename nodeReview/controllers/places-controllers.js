@@ -1,3 +1,5 @@
+const fs = require("fs");
+
 const HttpError = require("../models/http-error");
 const { validationResult } = require("express-validator");
 const Place = require("../models/place");
@@ -67,8 +69,7 @@ const createPlace = async (req, res, next) => {
     description,
     address,
     location: coordinates,
-    image:
-      "https://modo-phinf.pstatic.net/20170208_281/14865453315606kNKk_JPEG/mosa7CEoze.jpeg?type=w1100",
+    image: req.file.path,
     creator,
   });
 
@@ -160,6 +161,9 @@ const deletePlace = async (req, res, next) => {
     return next(error);
   }
 
+  const imagePath = place.image;
+  console.log(imagePath);
+
   try {
     const sess = await mongoose.startSession();
     sess.startTransaction();
@@ -172,6 +176,11 @@ const deletePlace = async (req, res, next) => {
     const error = new HttpError("삭제가 되지 않았습니다.", 500);
     return next(error);
   }
+
+  fs.unlink(imagePath, (err) => {
+    console.log(err);
+    console.log("이미지가 삭제되지 않았습니다.");
+  });
 
   res.status(200).json({ message: "삭제완료" });
 };

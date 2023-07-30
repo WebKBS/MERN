@@ -4,6 +4,7 @@ import { useHistory } from "react-router-dom";
 import Input from "../../shared/components/FormElements/Input";
 import "./PlaceForm.css";
 import Button from "../../shared/components/FormElements/Button";
+import ImageUpload from "../../shared/components/FormElements/ImageUpload";
 
 import ErrorModal from "../../shared/components/UiElement/ErrorModal";
 import LoadingSpinner from "../../shared/components/UiElement/LoadingSpinner";
@@ -33,6 +34,10 @@ const NewPlace = () => {
         value: "",
         isValid: false,
       },
+      image: {
+        value: null,
+        isValid: false,
+      },
     },
     false
   );
@@ -42,19 +47,14 @@ const NewPlace = () => {
   const placeSubmitHandler = async (event) => {
     event.preventDefault();
     try {
-      await sendRequest(
-        "http://localhost:4000/api/places",
-        "POST",
-        JSON.stringify({
-          title: formState.inputs.title.value,
-          description: formState.inputs.description.value,
-          address: formState.inputs.address.value,
-          creator: auth.userId,
-        }),
-        {
-          "Content-Type": "application/json",
-        }
-      );
+      const formData = new FormData();
+      formData.append("title", formState.inputs.title.value);
+      formData.append("description", formState.inputs.description.value);
+      formData.append("address", formState.inputs.address.value);
+      formData.append("creator", auth.userId);
+      formData.append("image", formState.inputs.image.value);
+
+      await sendRequest("http://localhost:4000/api/places", "POST", formData);
 
       // 리다이렉트
       history.push("/");
@@ -90,6 +90,11 @@ const NewPlace = () => {
           validators={[VALIDATOR_REQUIRE()]}
           errorText="주소를 입력하세요"
           onInput={inputHandler}
+        />
+        <ImageUpload
+          id="image"
+          onInput={inputHandler}
+          errorText="이미지를 업로드 해주세요."
         />
         <Button type="submit" disabled={!formState.isValid}>
           Add Place
