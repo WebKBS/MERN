@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Redirect, Switch } from 'react-router-dom';
 import Users from './user/pages/Users';
 import NewPlace from './places/pages/NewPlace';
@@ -60,6 +60,15 @@ const App = () => {
       </Switch>
     );
   }
+
+  // 인증처리를 위해 가장먼저 실행한다.
+  useEffect(() => {
+    const storedData = JSON.parse(localStorage.getItem('userData'));
+    console.log(storedData);
+    if (storedData && storedData.token) {
+      login(storedData.userId, storedData.token);
+    }
+  }, [login]);
 
   return (
     <AuthContext.Provider
