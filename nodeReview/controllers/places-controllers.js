@@ -58,7 +58,7 @@ const createPlace = async (req, res, next) => {
     next(HttpError('에러가 발생했습니다.', 422));
   }
 
-  const { title, description, address, creator } = req.body;
+  const { title, description, address } = req.body;
 
   let coordinates = await getCoorsForAddress();
 
@@ -68,13 +68,13 @@ const createPlace = async (req, res, next) => {
     address,
     location: coordinates,
     image: req.file.path,
-    creator,
+    creator: req.userData.userId,
   });
 
   // user가 있는지 확인
   let user;
   try {
-    user = await User.findById(creator);
+    user = await User.findById(req.userData.userId);
   } catch (err) {
     console.log(err);
     const error = new HttpError('장소 생성에 실패했습니다.', 500);
