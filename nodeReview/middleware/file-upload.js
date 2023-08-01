@@ -22,6 +22,8 @@ const fileUpload = multer({
   storage: multer.diskStorage({
     destination: (req, file, cb) => {
       const uploadDir = path.join(process.cwd(), 'uploads', 'images');
+
+      // 이미지 저장할 폴더가 있는지 체크
       createDirectoryIfNotExists(uploadDir)
         .then(() => {
           cb(null, 'uploads/images');

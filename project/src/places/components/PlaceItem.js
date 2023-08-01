@@ -1,12 +1,12 @@
-import React, { useState, useContext } from "react";
-import "./PlaceItem.css";
-import Card from "../../shared/components/UiElement/Card";
-import Button from "../../shared/components/FormElements/Button";
-import Modal from "../../shared/components/UiElement/Modal";
-import { AuthContext } from "../../shared/context/auth-context";
-import { useHttpClient } from "../../shared/hooks/http-hook";
-import ErrorModal from "../../shared/components/UiElement/ErrorModal";
-import LoadingSpinner from "../../shared/components/UiElement/LoadingSpinner";
+import React, { useState, useContext } from 'react';
+import './PlaceItem.css';
+import Card from '../../shared/components/UiElement/Card';
+import Button from '../../shared/components/FormElements/Button';
+import Modal from '../../shared/components/UiElement/Modal';
+import { AuthContext } from '../../shared/context/auth-context';
+import { useHttpClient } from '../../shared/hooks/http-hook';
+import ErrorModal from '../../shared/components/UiElement/ErrorModal';
+import LoadingSpinner from '../../shared/components/UiElement/LoadingSpinner';
 
 const PlaceItem = (props) => {
   const { isLoading, error, sendRequest, clearError } = useHttpClient();
@@ -28,27 +28,19 @@ const PlaceItem = (props) => {
     setShowConfirmModal(false);
 
     try {
-      await sendRequest(
-        `http://localhost:4000/api/places/${props.id}`,
-        "DELETE"
-      );
+      await sendRequest(`http://localhost:4000/api/places/${props.id}`, 'DELETE', null, {
+        Authorization: 'Bearer ' + auth.token,
+      });
       props.onDelete(props.id);
     } catch (err) {
-      console.log("삭제실패", err);
+      console.log('삭제실패', err);
     }
   };
 
   return (
     <React.Fragment>
       <ErrorModal error={error} onClear={clearError} />
-      <Modal
-        show={showMap}
-        onCancel={closeMapHandler}
-        header={props.address}
-        contentClass="place-item__modal-content"
-        footerClass="place-item__modal-actions"
-        footer={<Button onClick={closeMapHandler}>Close</Button>}
-      >
+      <Modal show={showMap} onCancel={closeMapHandler} header={props.address} contentClass="place-item__modal-content" footerClass="place-item__modal-actions" footer={<Button onClick={closeMapHandler}>Close</Button>}>
         <div className="map-container">
           <h2>The MAP!</h2>
         </div>
@@ -75,10 +67,7 @@ const PlaceItem = (props) => {
         <Card>
           {isLoading && <LoadingSpinner asOverlay />}
           <div className="place-item__image">
-            <img
-              src={`http://localhost:4000/${props.image}`}
-              alt={props.title}
-            />
+            <img src={`http://localhost:4000/${props.image}`} alt={props.title} />
           </div>
           <div className="place-item__info">
             <h2>{props.title}</h2>
@@ -91,9 +80,7 @@ const PlaceItem = (props) => {
             </Button>
 
             {/* auth userId를 검증해서 만든사람이 맞는지 확인한다. 아니면 수정버튼을 제거 */}
-            {auth.userId === props.creatorId && (
-              <Button to={`/places/${props.id}`}>Edit</Button>
-            )}
+            {auth.userId === props.creatorId && <Button to={`/places/${props.id}`}>Edit</Button>}
             {auth.userId === props.creatorId && (
               <Button danger onClick={showDeleteWarningHandler}>
                 Delete
