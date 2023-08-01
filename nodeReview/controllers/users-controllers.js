@@ -77,7 +77,7 @@ const signup = async (req, res, next) => {
     token = jwt.sign(
       { userId: createdUser.id, email: createdUser.email },
       'supersecret_dont_share',
-      { expiresIn: '11h' } // 토큰 만료시간 설정
+      { expiresIn: '1h' } // 토큰 만료시간 설정
     );
   } catch (err) {
     console.log(err);
@@ -124,7 +124,7 @@ const login = async (req, res, next) => {
     token = jwt.sign(
       { userId: existingUser.id, email: existingUser.email },
       'supersecret_dont_share',
-      { expiresIn: '11h' } // 토큰 만료시간 설정
+      { expiresIn: '1h' } // 토큰 만료시간 설정
     );
   } catch (err) {
     console.log(err);
